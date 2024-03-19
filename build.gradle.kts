@@ -3,6 +3,7 @@ plugins {
     id("io.spring.dependency-management") version "1.1.4"
     kotlin("jvm") version "1.9.22"
     kotlin("plugin.spring") version "1.9.22"
+    id("org.springdoc.openapi-gradle-plugin") version "1.6.0"
 }
 
 group = "org.example"
@@ -16,6 +17,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui0")
+    implementation("org.springdoc:springdoc-openapi-ui")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
 
@@ -24,4 +27,10 @@ tasks.test {
 }
 kotlin {
     jvmToolchain(17)
+}
+
+openApi {
+    apiDocsUrl.set("http://localhost:8080/api-docs")
+    outputDir.set(File("."))
+    outputFileName.set("openapi.json")
 }
