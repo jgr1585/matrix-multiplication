@@ -8,35 +8,36 @@ function App() {
     const [data, setData] = useState<number[]>([]);
 
     return (
-        <div>
-            <div>
-                <input type="number" name="size" onChange={(event) => setSize(Number(event.target.value))}/>
-                <button 
-                    onClick={() => {
-                        const array: number[] = []
-                        for (let i = 0; i <= size; i++) {
-                            api.multiplyMatrix(i).then((response) => {
-                                //Add the response to the data state
-                                array[i] = response.data.timeNs
-                            })
-                        }
+        <div className="flex flex-auto content-center">
+            <div className="content-center self-center ml-32">
+                <div>
+                    <input type="number" name="size" onChange={(event) => setSize(Number(event.target.value))}/>
+                    <button 
+                        onClick={() => {
+                            const promises: Promise<any>[] = []
+                            for (let i = 0; i <= size; i++) {
+                                promises.push(api.multiplyMatrix(i));
+                            }
 
-                        setData(array);
+                            Promise.all(promises).then(
+                                (results) => setData(results.map(result => result.data.timeNs))
+                            
+                            );
 
-                    }}
-                    >Generate</button>
+                        }}
+                        >Generate</button>
+                </div>
+                <LineChart
+                    series={[
+                        {
+                        data: data,
+                        },
+                    ]}
+                    width={1000}
+                    height={600}
+                />
             </div>
-            <LineChart
-                series={[
-                    {
-                    data: data,
-                    },
-                ]}
-                width={1000}
-                height={600}
-            />
         </div>
-
     );
 }
 
