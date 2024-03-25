@@ -43,3 +43,6 @@ bin/
 
 #OpenAPI
 spa/openapi.json
+
+# Client
+src/main/resources/public/

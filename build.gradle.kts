@@ -34,3 +34,41 @@ openApi {
     outputDir.set(File("./spa"))
     outputFileName.set("openapi.json")
 }
+
+// Run 'npm build' in the folder spa and copy the build folder to the resources/static folder before building the jar
+tasks.register("copyStaticResources") {
+    description = "Copy static resources from spa to resources/static"
+    group = "build"
+
+    //Run OpenApi task before copying the static resources
+    dependsOn("generateOpenApiDocs")
+
+    doLast {
+        exec {
+            workingDir = file("spa")
+            commandLine = listOf("npm", "install")
+        }
+        exec {
+            workingDir = file("spa")
+            commandLine = listOf("npm", "run", "openapi")
+        }
+        exec {
+            workingDir = file("spa")
+            commandLine = listOf("npm", "run", "build")
+        }
+        copy {
+            from("spa/build") {
+                include("**")
+            }
+            into("src/main/resources/public")
+        }
+    }
+}
+
+tasks.build {
+    dependsOn("copyStaticResources")
+}
+
+tasks.jar {
+    dependsOn("copyStaticResources")
+}
