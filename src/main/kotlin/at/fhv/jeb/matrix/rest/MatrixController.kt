@@ -20,7 +20,7 @@ class MatrixController {
 
         val result = matrixA.multiply(matrixB)
 
-        return MatrixResultDTO(listOf(listOf()), listOf(listOf()), listOf(listOf()), result.timeNs)
+        return MatrixResultDTO(matrixA.matrix, matrixB.matrix, result.matrix.matrix, result.timeNs)
     }
 
     @GetMapping("/addMatrix")
