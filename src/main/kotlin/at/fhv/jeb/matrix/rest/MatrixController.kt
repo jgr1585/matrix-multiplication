@@ -36,7 +36,7 @@ class MatrixController {
 
         executor.submit {
             saveFile(uuid, matrixResultDTO)
-        };
+        }
 
         return matrixResultDTO
     }
@@ -54,7 +54,7 @@ class MatrixController {
 
         executor.submit {
             saveFile(uuid, matrixResultDTO)
-        };
+        }
 
         return matrixResultDTO
     }
