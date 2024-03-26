@@ -2,7 +2,6 @@ import { LineChart } from "@mui/x-charts";
 import Button from "./Button";
 import NumberInput from "./NumberInput";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
-import { MatrixControllerApi } from "../api";
 
 type BoxProps = {
     title: string;
@@ -11,7 +10,6 @@ type BoxProps = {
     setSize: (size: number) => void;
     data: number[];
     setData: (data: number[]) => void;
-    jsonDownload: string;
 }
 
 
@@ -33,7 +31,7 @@ const themeDark = createTheme({
         }
     }
 });
-export default function Box({ title, onclick, size, setSize, data, setData, jsonDownload }: Readonly<BoxProps>) {
+export default function Box({ title, onclick, size, setSize, data, setData }: Readonly<BoxProps>) {
 
     const isDark = document.documentElement.classList.contains("dark");
 
@@ -79,16 +77,12 @@ export default function Box({ title, onclick, size, setSize, data, setData, json
             <div>
                 <Button
                     onclick={() => {
-                        const api = new MatrixControllerApi();
-
-                        api.downloadMatrix(jsonDownload).then((response) => {
-                            const element = document.createElement("a");
-                            element.href = URL.createObjectURL(new Blob([JSON.stringify(response.data)], { type: "application/json" }));
-                            element.download = `${jsonDownload}.json`;
-                            document.body.appendChild(element);
-                            element.click();
-                            document.body.removeChild(element);
-                        });
+                        const element = document.createElement("a");
+                        element.href = URL.createObjectURL(new Blob([JSON.stringify(data)], { type: "application/json" }));
+                        element.download = `${title}.json`;
+                        document.body.appendChild(element);
+                        element.click();
+                        document.body.removeChild(element);
                     }}
                 >Download</Button>
                 <Button
@@ -102,7 +96,7 @@ export default function Box({ title, onclick, size, setSize, data, setData, json
                                 const reader = new FileReader();
                                 reader.onload = () => {
                                     const result = JSON.parse(reader.result as string);
-                                    setData(result.map((value: any) => (value.timeNs / 1000000)));
+                                    setData(result);
                                 }
                                 reader.readAsText(file);
                             }

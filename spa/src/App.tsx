@@ -1,7 +1,6 @@
 
 import { MatrixControllerApi } from "./api";
 import { useState } from "react";
-import { v4 as uuidv4 } from 'uuid';
 import Box from "./component/Box";
 
 function executeAsync(func: () => void){
@@ -12,10 +11,8 @@ function App() {
     const api = new MatrixControllerApi();
     const [sizeM, setSizeM] = useState<number>(0);
     const [dataM, setDataM] = useState<number[]>([]);
-    const [jsonM, setJsonM] = useState<string>("");
     const [sizeA, setSizeA] = useState<number>(0);
     const [dataA, setDataA] = useState<number[]>([]);
-    const [jsonA, setJsonA] = useState<string>("");
 
 
     return (
@@ -26,11 +23,9 @@ function App() {
                 setSize={setSizeM}
                 onclick={() => {
                     let array: (number | null)[] = Array(sizeM + 1).fill(null);
-                    const uuid = uuidv4();
-                    setJsonM(uuid);
                     executeAsync(async () => {
                         for (let i = 0; i <= sizeM; i++) {
-                            const request = await api.multiplyMatrix(i, uuid);
+                            const request = await api.multiplyMatrix(i);
                             array[i] = (request.data.timeNs / 1000000);
                             setDataM([...array.filter((value) => value !== null)] as number[]);
                         }
@@ -38,7 +33,6 @@ function App() {
                 }}
                 data={dataM}
                 setData={setDataM}
-                jsonDownload={jsonM}
             />
             <Box
                 title="Matrix Addition"
@@ -46,11 +40,9 @@ function App() {
                 setSize={setSizeA}
                 onclick={() => {
                     let array: (number | null)[] = Array(sizeA + 1).fill(null);
-                    const uuid = uuidv4();
-                    setJsonA(uuid);
                     executeAsync(async () => {
                         for (let i = 0; i <= sizeA; i++) {
-                            const request = await api.addMatrix(i, uuid)
+                            const request = await api.addMatrix(i)
                             array[i] = (request.data.timeNs / 1000000);
                             setDataA([...array.filter((value) => value !== null)] as number[]);
                         }
@@ -58,7 +50,6 @@ function App() {
                 }}
                 data={dataA}
                 setData={setDataA}
-                jsonDownload={jsonA}
             />
         </div>
     );
