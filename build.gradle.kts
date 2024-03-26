@@ -72,3 +72,7 @@ tasks.build {
 tasks.jar {
     dependsOn("copyStaticResources")
 }
+
+tasks.bootJar {
+    dependsOn("copyStaticResources")
+}
