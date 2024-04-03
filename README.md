@@ -72,8 +72,12 @@ T(n) = 1 + 3.2n + 3.5n^2 + 5.5n^3
 
 ### Graph
 ![Multiply Graph](./img/matrixMultiplication.png)
+<svg scr="./img/matrixMultiplication.svg>
 
-[Sample File](./sapleData/matrixMultiplication.json)
+[Sample File](./sampleData/matrixMultiplication.json)
+
+## Runtime Analysis Matrix Addition
+![Add Function](./img/addFun.png)
 
 ### Table
 
@@ -98,7 +102,8 @@ T(n) = 1 + 4.2n + 5.5n^2
 
 
 ### Graph
-![Add Graph](./img/matrixAddition.svg)
+![Add Graph](./img/matrixAddition.png)
+<svg scr="./img/matrixAddition.svg">
 
 [Sample File](./sampleData/matrixAddition.json)
 
