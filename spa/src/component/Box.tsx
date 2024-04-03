@@ -2,6 +2,7 @@ import { LineChart } from "@mui/x-charts";
 import Button from "./Button";
 import NumberInput from "./NumberInput";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
+import { useRef } from "react";
 
 type BoxProps = {
     title: string;
@@ -10,30 +11,35 @@ type BoxProps = {
     setSize: (size: number) => void;
     data: number[];
     setData: (data: number[]) => void;
+    scaleFactor: number;
+    setScaleFactor: (scaleFactor: number) => void;
+    calcExpectedGraph: (index: number, scaleFactor: number) => number;
 }
 
 
 const themeLight = createTheme({
     palette: {
-        background: {
-            default: "#e4f0e2"
-        }
+        mode: "light"
     }
 });
 
 const themeDark = createTheme({
     palette: {
-        background: {
-            default: "#222222"
-        },
-        text: {
-            primary: "#ffffff"
-        }
+        mode: "dark"
     }
 });
-export default function Box({ title, onclick, size, setSize, data, setData }: Readonly<BoxProps>) {
+
+const strokeColor = ["#3f51b5", "#f44336"];
+
+
+export default function Box({ title, onclick, size, setSize, data, setData, scaleFactor, setScaleFactor, calcExpectedGraph }: Readonly<BoxProps>) {
 
     const isDark = document.documentElement.classList.contains("dark");
+    const chartRef = useRef<HTMLElement>(null);
+
+    function calcAverageGraph(data: number[], scaleFactor: number): number[] {
+        return data.map((_, index) => calcExpectedGraph(index, scaleFactor))
+    }
 
     return (
         <div className="flex-1 text-gray-900 dark:text-white border-2 border-sky-500 rounded-md">
@@ -53,6 +59,16 @@ export default function Box({ title, onclick, size, setSize, data, setData }: Re
                     onclick={onclick}
                 >Generate</Button>
             </div>
+            <div className="flex flex-row space-x-2 mt-1 mr-1">
+                <p className="">Scale Factor:</p>
+                <NumberInput
+                    name="scaleFactor"
+                    onChange={(number) => setScaleFactor(number)}
+                    value={scaleFactor}
+                    step={0.000001}
+                    allowNegative={true}
+                    onKeyDown={(e) => {}}                />
+            </div>
             <ThemeProvider theme={isDark ? themeLight : themeDark}>
                 <LineChart
                     xAxis={[{
@@ -66,15 +82,27 @@ export default function Box({ title, onclick, size, setSize, data, setData }: Re
                     series={[
                         {
                             data: data,
-                            color: "#3f51b5"
+                            color: "#3f51b5",
+                            showMark: false
+                        }, {
+                            data: calcAverageGraph(data, scaleFactor),
+                            color: "#f44336",
+                            showMark: false
                         }
                     ]}
                     height={600}
+                    ref={chartRef}
                 />
             </ThemeProvider>
-            <p>Total: {data.reduce((a, b) => a + b, 0).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}ms</p>
+            <div>
+                <p>Total: {data.reduce((a, b) => a + b, 0).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}ms</p>
+            </div>
+
 
             <div>
+                <Button
+                    onclick={() => downloadSVG(chartRef.current as HTMLElement, title)}
+                >Get SVG</Button>
                 <Button
                     onclick={() => {
                         const element = document.createElement("a");
@@ -107,4 +135,37 @@ export default function Box({ title, onclick, size, setSize, data, setData }: Re
             </div>
         </div>
     );
+}
+
+function downloadSVG(svg: HTMLElement, title: string) {
+    console.log(svg);
+    if (svg) {
+        const copySvg = svg.cloneNode(true) as HTMLElement;
+        Array.from(copySvg.getElementsByClassName("MuiLineElement-root")).forEach((element, index) => {
+            const style = (element as HTMLElement).style;
+
+            style.strokeWidth = "2";
+            style.strokeLinejoin = "round";
+            style.fill = "none";
+            style.stroke = strokeColor[index % strokeColor.length];
+            style.webkitTransition = "opacity 0.2s ease-in,stroke 0.2s ease-in";
+            style.transition = "opacity 0.2s ease-in,stroke 0.2s ease-in";
+            style.opacity = "1";
+        });
+
+        Array.from(copySvg.getElementsByClassName("MuiChartsAxis-line")).forEach((element) => {
+            const style = (element as HTMLElement).style;
+
+            style.stroke = "#fff";
+            style.shapeRendering = "crispEdges";
+            style.strokeWidth = "1";
+        });
+
+        const element = document.createElement("a");
+        element.href = URL.createObjectURL(new Blob([copySvg.outerHTML], { type: "image/svg+xml" }));
+        element.download = `${title}.svg`;
+        document.body.appendChild(element);
+        element.click();
+        document.body.removeChild(element);
+    }
 }
