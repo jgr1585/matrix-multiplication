@@ -71,12 +71,9 @@ T(n) = 1 + 3.2n + 3.5n^2 + 3.5n^3 + 2n^3 <br>
 T(n) = 1 + 3.2n + 3.5n^2 + 5.5n^3
 
 ### Graph
-![Multiply Graph](./img/matrixMultiplication.svg)
+![Multiply Graph](./img/matrixMultiplication.png)
 
-[Sample File](./img/matrixMultiplication.svg)
-
-## Runtime Analysis Matrix Addition
-![Add Function](./sampleData/matrixMultiplication.json)
+[Sample File](./sapleData/matrixMultiplication.json)
 
 ### Table
 
