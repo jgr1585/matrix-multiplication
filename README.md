@@ -72,7 +72,6 @@ T(n) = 1 + 3.2n + 3.5n^2 + 5.5n^3
 
 ### Graph
 ![Multiply Graph](./img/matrixMultiplication.png)
-<svg scr="./img/matrixMultiplication.svg>
 
 [Sample File](./sampleData/matrixMultiplication.json)
 
